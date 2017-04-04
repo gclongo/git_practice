@@ -1,0 +1,40 @@
+#!/bin/bash
+#PBS -N 2017-04-03_lingcod_hake_pstacks_sablefish
+#PBS -m abe
+#PBS -M gary.longo@noaa.gov
+#PBS -l nodes=node01.cluster:ppn=4
+
+# set the path
+export LD_LIBRARY_PATH=/share/bioinformatics/gcc/lib64:${LD_LIBRARY_PATH}
+LOC=/share/bioinformatics/stacks-1.44/bin
+
+
+#### pstacks
+# so this is similar to ustacks and will call SNPs from aligned loci...I'm not sure if I need to to make a directory called ./logs/ for this to dump outputs but I'll do so just in case
+# changed backward slash to forward slash for pstacks directory (this was incorrect before)
+# not sure where there options -r -d flag options in pstacks come from but they are not valid options, also not sure if input should be -t bam or bowtie...
+
+cd /scratch/glongo/lingcod/2017-02-09_lingcod_hake/sablefish_lingcodhake_bowtie
+
+FILES=`ls -1 *.bowtie2align`
+for file in ${FILES}
+do
+	echo ${file}
+	NAME=`echo ${file} | awk -F "." '{print $1}'`
+	echo $j # don't worry about SQL ID for these first samples
+	j=`echo $(($j+1))`
+    ID=`echo $j`
+
+	${LOC}/pstacks \
+        -t bowtie \
+        -f ${file} \
+        -p 8 \
+        -o . \
+        --model_type 'bounded' \
+        --bound_low 0.001 \
+        --bound_high 0.01 \
+        -i ${ID} \
+        -m 2 \
+         2>&1 | tee ./logs/${NAME}.m2.pstacks.log
+
+done
