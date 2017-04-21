@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# getting good with git is great
 
 # first time you set up git add your username, Gary Longo
 git config --global user.name "Gary Longo"
