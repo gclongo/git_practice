@@ -1,0 +1,73 @@
+# LINGCOD PROJECT GENERAL NOTES
+
+### STACKS general notes and organization
+
+*denovo_map runs* I will leave all the original outputs from each batch in the main denovo directory, e.g. '/scratch/glongo/lingcod/data/2017-02-09_lingcod_hake/denovo_map/2017-04-13_denovo_ling' and then create a specific directory for each populations run, e.g. 'XXXXXXX'
+
+## 2017-04-18
+
+Today has seemed a bit like a cluster fuck. My brain hurts with scripts and coding nonsense. Ok, I need to produce some VCF files in order to better visualize my data. Krista uses VCFtools to do so by looking at outputs from ustacks (or pstacks), cstacks, and stacks etc. I ran these together in denovo_map so it will be a bit different me getting through the scripts and files. Im always hesitant about writing over previous population runs *but* very quickly things get cluttered and hardrives fill up. So today Ill run the same popultions shell but with two VCF flags. *Be sure to compare output files and then cleanup, i.e., delete redundant files or directories*  
+	shell name with VCF flag '2017-04-18_populations_ling_p3_r0.8_sans_pop4_VCF.sh'
+
+## 2017-04-16 & 2017-04-17
+
+Lingcod denovo_map for the '2017-02-09_lingcod_hake' library finished running on Friday evening. After much trial and tribulation the following script was great sucess!
+'/share/glongo/lingcod/scripts/2017-04-13_denovo_map_ling.sh'
+
+ One of things you'll need to is move the stacks output from the scratch directory on node01 to your shared directory. For the time being I copied all the batch_1.* files
+
+**denovo_map analyses** Dang, looking at the pairwise comparisons from the ling trial run, Fst values seem pretty damn high and the values for population 4, which is central CA dont make a lot of sense. This is most likely because population 4 is the Point Sur samples. They were complete shit and only 4 individuals were included in this analysis...and these 4 likely had very low coverage. The pairwise population comparisons in the 'batch_1.phistats.' corroborate this. (1_4 = 4260 loci, 2_4 = 4541, 3_4 = 4812, 4_5 = 4447, 4_6 = 3570) very low compared to what we see in other comparisons (1_2 = 75370 loci, 1_5 = 75282, 1_6 = 60333) 
+- Something to think about is how do these shitty samples effect global Fst calculations. Do they? - negligible. Comparing the Fst summary files between population runs with and without shitty samples (pop 4 aka point sur in this case), there is no significant difference in pairwise values among the remaining populations
+- *total loci count* looking at 'batch_1.markers.tsv' , looks like we are sitting pretty at 673,682 loci...thats it?! This is total number of loci in the catalog. Wow, might be a bit overkill. However this number includes ALL the catalog loci, which includes those loci that are only found in one individual, which are not really useful. We need the number of loci output from the populations run and most likely need to constrain the populations output.
+- *polymorphic loci count* looking at the 'batch_1.phistats.tsv' file, the count is 125,544
+- *coverage* you can see the average coverage for each individual in the 'denovo_map.log' but the average is ~ 4.5x , which seems a bit low to mee
+
+*things to tweak for running populations*
+- use write single SNP flag 
+- set population parameters
+- consider running with and without population 4(point sur)
+	without is called '2017-04-17_ling_popmap_sans_pop4.txt'
+- pop shell '2017-04-17_populations_ling_p3_r0.8.sh' **with** pop 4 
+- pop shell '2017-04-17_populations_ling_p3_r0.8_sans_pop4.sh' **without** pop 4
+
+**population codes for '2017-02-09_lingcod_hake' popmaps**
+- 1 WA_WES_SOUTH_REG_1_2 
+- 2 WA_NEH_OFFSHORE
+- 3 WA_NEH_NEARSHORE_REG_3_4
+- 4 CCA_MON_PTSUR
+- 5 SCA_SBA_SRI
+- 6 SCA_SBA_SB_CHANNEL
+
+## 2017-04-10
+
+From running the alignment programs and pstacks last week filled up the scratch directory. So I am moving the four alignment files directories from here
+	'/scratch/glongo/lingcod/data/2017-02-09_lingcod_hake'
+to here:
+	'/share/glongo/lingcod/data/2017-02-09_lingcod_hake'
+
+These include the following files:
+	'cottus_lingcod_hake_bwamem'
+	'sablefish_lingcod_hake_bwamem'
+	'sablefish_lingcodhake_bowtie'
+	'cottus_rhenanus_lingcodhake_bowtie'
+
+**stacks** :planning on running a 'denovo_map' on the lingcod samples and need to think about what parameters I want to use. This is what the Saenz-Agudelo anemonefish paper used
+- *-m* minumum read depth of 3
+- *-M* number of mismatches allowed between loci within individuals
+- *-n* number of mismatches between loci within a catalog 
+
+## 2017-04-07
+
+So I was running into trouble running BWA yesterday on with the sablefish genome because I didn't actually create the required index files. I did this using the index command in bwa for both cottus and sablefish
+
+Ok finally got BWA running the sablefish genome server using this script
+	'/scripts/2017-04-06_lingcod_hake_bwa_genomes.job'
+
+## 2017-04-06
+
+After a little trial and error I got pstacks running with the help of Giles. It turns out that my bowtie2align files (in my scratch directory) were actually SAM files, which is why pstacks wasn't able to read them. 
+
+Things to look at tonight:
+- SAM, BAM, and bowtie file structures 
+
+
