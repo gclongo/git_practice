@@ -32,3 +32,7 @@ ssh nwcillumin
 cd /share/glongo/git_practice
 git fetch
 git pull
+
+# here some other handy tools
+git log
+git status
